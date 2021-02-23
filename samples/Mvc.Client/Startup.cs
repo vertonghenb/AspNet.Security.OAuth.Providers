@@ -4,6 +4,7 @@
  * for more information concerning the license and the contributors participating to this project.
  */
 
+using System;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
+using Mvc.Client.Services.Discord;
 
 namespace Mvc.Client
 {
@@ -60,6 +62,15 @@ namespace Mvc.Client
                 options.EnterpriseDomain = Configuration["GitHub:EnterpriseDomain"];
                 options.Scope.Add("user:email");
             })
+            .AddDiscord(options =>
+            {
+                options.ClientId = Configuration["Discord:ClientId"];
+                options.ClientSecret = Configuration["Discord:ClientSecret"];
+                options.Scope.Add("email");
+                options.Scope.Add("identify");
+                options.Scope.Add("guilds");
+                options.SaveTokens = true;
+            })
 
             /*
             .AddApple(options =>
@@ -77,6 +88,13 @@ namespace Mvc.Client
                 options.ClientId = Configuration["Dropbox:ClientId"];
                 options.ClientSecret = Configuration["Dropbox:ClientSecret"];
             });
+
+            services.AddHttpContextAccessor()
+                    .AddTransient<Handler>();
+
+            services.AddHttpClient<IService, Service>()
+                    .ConfigureHttpClient(c => c.BaseAddress = new Uri(Configuration["Discord:ApiBasePath"]))
+                    .AddHttpMessageHandler<Handler>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
         }

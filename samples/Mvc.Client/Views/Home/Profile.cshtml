@@ -1,0 +1,21 @@
+﻿@using Mvc.Client.ViewModels
+
+@model ProfileVM
+<ul>
+    <li>Id: @Model.Id</li>
+    <li>Username: @Model.Name</li>
+    <li>Email: @Model.Email</li>
+    <li>...</li>
+</ul>
+
+@if (Model.Guilds is not null)
+{
+    <h2>Guilds</h2>
+    <ul>
+        @foreach (var guild in Model.Guilds)
+        {
+            <li>@guild.Name</li>
+        }
+    </ul>
+}
+
